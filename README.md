@@ -2,6 +2,7 @@
 
 Flutter package to create organic motion transitions using basic numeric integrations.
 
+
 ## why?
 Why not? well, the basic difference with `Tweens` is that the change in value looks much cooler, it feels more "organic, while Tweens are more "mechanic". 
 
@@ -133,7 +134,29 @@ return MotionBuilder(
 Both widgets will dispose the motion values when they are removed from the widget, if the object isn't consumed by another Listener.
 
 
+## installation
 
+**just_motion** is in active developing and testing stages. In a couple of days it will be available in pub.dev
+
+In the meantime, if you wanna use it and help me improve it, you should be using dart >= 2.12
+
+Just use this repo url in your _pubspec.yaml_
+
+```yaml
+dependencies:
+  just_motion:
+    git: https://github.com/roipeker/just_motion.git
+```
+
+And import **just_motion** in your code:
+
+```dart
+import 'package:just_motion/just_motion.dart';
+```
+
+Now go, and make your apps comes to life.
+
+Happy coding!
 
 
 ## Getting Started
