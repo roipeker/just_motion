@@ -6,7 +6,7 @@ class TickerMan {
   static TickerMan get instance => _instance;
 
   late Ticker _ticker = Ticker(_onTick);
-  final _motions = <MotionVal>{};
+  final _motions = <MotionValue>{};
 
   void isActive() => _ticker.isActive;
 
@@ -19,7 +19,7 @@ class TickerMan {
   }
 
   void _onTick(Duration t) {
-    final remover = <MotionVal>{};
+    final remover = <MotionValue>{};
     _motions.forEach((motion) {
       motion.tick(t);
       if (motion.completed) {
@@ -34,11 +34,11 @@ class TickerMan {
     }
   }
 
-  void remove<T>(MotionVal<T> euler) {
+  void remove<T>(MotionValue<T> euler) {
     _motions.remove(euler);
   }
 
-  void activate<T>(MotionVal<T> euler) {
+  void activate<T>(MotionValue<T> euler) {
     if (!euler.completed) {
       _motions.add(euler);
       start();

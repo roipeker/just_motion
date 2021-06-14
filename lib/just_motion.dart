@@ -8,6 +8,8 @@ import 'package:flutter/scheduler.dart';
 import 'dart:async';
 
 part 'src/motion_ticker.dart';
-part 'src/motion_euler.dart';
-part 'src/motion_val.dart';
+part 'src/ease.dart';
+part 'src/motion_value.dart';
 part 'src/motion_extensions.dart';
+part 'src/spring.dart';
+part 'src/motion_widget.dart';

@@ -1,19 +1,16 @@
 part of just_motion;
 
-abstract class EulerBase<T> extends MotionVal<T> {
+abstract class EaseBase<T> extends MotionValue<T> {
   late double minDistance, ease;
 
-  @override
-  String toString() {
-    return '$value / $target';
-  }
-
-  EulerBase(
+  EaseBase(
     T value, {
     T? target,
     double minDistance = .01,
-    double ease = 10,
-  }) : super(value) {
+    double ease = 0.1,
+  })  : assert(ease > 0.0 && ease < 1.0,
+            '"ease" has to be > 0 and < 1, think of it as 1 / divisions. For example `ease: 1 / 30`'),
+        super(value) {
     this.minDistance = minDistance;
     this.ease = ease;
     this.target = target ?? value;
@@ -31,8 +28,8 @@ abstract class EulerBase<T> extends MotionVal<T> {
 
   @override
   T get value {
-    if (MotionVal.proxyNotifier != null) {
-      MotionVal.proxyNotifier!.add(this);
+    if (MotionValue.proxyNotifier != null) {
+      MotionValue.proxyNotifier!.add(this);
     }
     return super.value;
   }
@@ -66,12 +63,12 @@ abstract class EulerBase<T> extends MotionVal<T> {
   void _updateValue() {}
 }
 
-class EulerVal extends EulerBase<double> {
-  EulerVal(
+class EaseValue extends EaseBase<double> {
+  EaseValue(
     double value, {
     double? target,
-    double minDistance = .1,
-    double ease = 10,
+    double minDistance = 0.1,
+    double ease = 0.1,
   }) : super(
           value,
           target: target,
@@ -87,82 +84,18 @@ class EulerVal extends EulerBase<double> {
       value = target;
       _setState(MotionState.target);
     } else {
-      value += distance / ease;
+      value += (distance * ease) * _dt;
       _setState(MotionState.moving);
     }
   }
 }
 
-class EulerInt extends EulerBase<int> {
-  final EulerVal _value;
-
-  EulerInt(
-    int value, {
-    int? target,
-    double minDistance = .1,
-    double ease = 10,
-  })  : _value = EulerVal(
-          value + .0,
-          target: target?.toDouble(),
-          minDistance: minDistance,
-          ease: ease,
-        ),
-        super(
-          value,
-          target: target,
-          minDistance: minDistance,
-          ease: ease,
-        );
-
-  @override
-  void _updateTarget() {
-    _value(target + .0);
-  }
-
-  @override
-  void _updateValue() {
-    _value.value = value + .0;
-  }
-
-  @override
-  bool get completed => _value.completed;
-
-  @override
-  double get ease => _value.ease;
-
-  @override
-  set ease(double v) => _value.ease = v;
-
-  @override
-  double get minDistance => _value.minDistance;
-
-  @override
-  set minDistance(double v) => _value.minDistance = v;
-
-  @override
-  int get value => _value().round();
-
-  @override
-  void tick(Duration t) {
-    if (isDelayed) return;
-    if (!_value.completed) {
-      _value.tick(t);
-    }
-    if (_value.completed) {
-      value = target;
-      notifyListeners();
-    } else {
-      notifyListeners();
-    }
-  }
-}
-
-class EulerAlignment extends EulerBase<Alignment> {
-  EulerAlignment(
+class EaseAlignment extends EaseBase<Alignment> {
+  EaseAlignment(
     Alignment value, {
     Alignment? target,
-    double minDistance = .1,
-    double ease = 10,
+    double minDistance = 0.1,
+    double ease = 0.1,
   }) : super(
           value,
           target: target,
@@ -176,17 +109,17 @@ class EulerAlignment extends EulerBase<Alignment> {
     if (distance.x.abs() <= minDistance && distance.y.abs() <= minDistance) {
       value = target;
     } else {
-      value += distance / ease;
+      value += (distance * ease) * _dt;
     }
   }
 }
 
-class EulerOffset extends EulerBase<Offset> {
-  EulerOffset(
+class EaseOffset extends EaseBase<Offset> {
+  EaseOffset(
     Offset value, {
     Offset? target,
-    double minDistance = .1,
-    double ease = 10,
+    double minDistance = 0.1,
+    double ease = 0.1,
   }) : super(
           value,
           target: target,
@@ -200,19 +133,19 @@ class EulerOffset extends EulerBase<Offset> {
     if (distance.dx.abs() <= minDistance && distance.dy.abs() <= minDistance) {
       value = target;
     } else {
-      value += distance / ease;
+      value += (distance * ease) * _dt;
     }
   }
 }
 
-class EulerColor extends EulerBase<Color> {
-  final r = EulerVal(0), g = EulerVal(0), b = EulerVal(0), a = EulerVal(0);
+class EaseColor extends EaseBase<Color> {
+  final r = EaseValue(0), g = EaseValue(0), b = EaseValue(0), a = EaseValue(0);
 
-  EulerColor(
+  EaseColor(
     Color value, {
     Color? target,
     double minDistance = 2,
-    double ease = 20,
+    double ease = 0.05,
   }) : super(
           value,
           target: target,

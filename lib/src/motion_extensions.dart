@@ -1,12 +1,12 @@
 part of just_motion;
 
 extension MotionAlignmentExtension on Alignment {
-  EulerAlignment euler({
+  EaseAlignment ease({
     Alignment? target,
-    double minDistance = .01,
-    double ease = 10,
+    double minDistance = 0.01,
+    double ease = 0.1,
   }) =>
-      EulerAlignment(
+      EaseAlignment(
         this,
         target: target,
         minDistance: minDistance,
@@ -15,12 +15,12 @@ extension MotionAlignmentExtension on Alignment {
 }
 
 extension MotionOffsetExtension on Offset {
-  EulerOffset euler({
+  EaseOffset ease({
     Offset? target,
-    double minDistance = .01,
-    double ease = 10,
+    double minDistance = 0.01,
+    double ease = 0.1,
   }) =>
-      EulerOffset(
+      EaseOffset(
         this,
         target: target,
         minDistance: minDistance,
@@ -29,12 +29,12 @@ extension MotionOffsetExtension on Offset {
 }
 
 extension MotionColorExtension on Color {
-  EulerColor euler({
+  EaseColor ease({
     Color? target,
-    double minDistance = .01,
-    double ease = 20,
+    double minDistance = 0.1,
+    double ease = 0.05,
   }) =>
-      EulerColor(
+      EaseColor(
         this,
         target: target,
         minDistance: minDistance,
@@ -42,30 +42,30 @@ extension MotionColorExtension on Color {
       );
 }
 
-extension MotionDoubleExtension on double {
-  EulerVal euler({
+extension MotionDoubleExtension on num {
+  EaseValue ease({
     num? target,
-    double minDistance = .1,
-    double ease = 20,
+    double minDistance = 0.1,
+    double ease = 0.1,
   }) =>
-      EulerVal(
+      EaseValue(
         this.toDouble(),
         target: target?.toDouble(),
         minDistance: minDistance,
         ease: ease,
       );
-}
 
-extension MotionIntExtension on int {
-  EulerInt euler({
-    int? target,
-    double minDistance = .1,
-    double ease = 20,
+  SpringValue spring({
+    num? target,
+    double minDistance = 0.05,
+    double spring = 0.1,
+    double friction = 0.95,
   }) =>
-      EulerInt(
-        this,
-        target: target,
+      SpringValue(
+        this.toDouble(),
+        target: target?.toDouble(),
         minDistance: minDistance,
-        ease: ease,
+        friction: friction,
+        spring: spring,
       );
 }

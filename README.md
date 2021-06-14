@@ -4,10 +4,12 @@ Flutter package to create organic motion transitions using basic numeric integra
 
 
 ## why?
-Why not? well, the basic difference with `Tweens` is that the change in value looks much cooler, it feels more "organic, while Tweens are more "mechanic". 
 
-`motion` is not based on `Durations` and interpolated values from 0-1, but rather on distance between the current value and the target value. 
-On the other hand, it doesn't need a Ticker provider, nor a huge set of Implicit widgets. Also no need for AnimationControllers.
+Why not? the basic difference with _Tweens_ is that the change in value looks much cooler, it feels more "organic, while Tweens are more "mechanic". 
+
+`just.motion` is not based on `Duration` and interpolated percentage values from 0-1; but rather on distance between the current value and the target value. 
+
+On the other hand, it doesn't need a Ticker provider, nor Implicit widgets to compensate the code boilerplate. Also, no need for `AnimationController`.
 
 There's a single internal Ticker, that manages it's own state based on the auto-subscribed `MotionValues`. 
 When there're no active motions, it just stops. 
@@ -18,17 +20,29 @@ So, is a great option for your app's animations! as subscriptions and memory man
 
 ## The Motion Value:
 
-Here's how it works: 
+Here's how it works:
+
+Basic _easing_ is a well known technique in games for light computation of movements, is based on proportional velocity, and his cousin, _spring_, on proportional acceleration.
+
+You set a `target` value, `MotionValue` calculates the distance, and the motion it generates is proportional to the distance, the bigger distance, more motion.
+
+So, the velocity is proportional to the distance, the further the target, the faster the value moves, as it gets closer and closer to the target, it hardly changes the value... that's why you can configure `minDistance` to tell the motion where to stop.
+
+While on `springs`, acceleration is proportional to the distance... 
 
 Declare a var that you will use to animate some widget property:
 
-```dart
-final height = EulerValue( 30 );
-///or the extension approach.
-final height = 30.euler();
+> NOTE: When using the `ease()` extension, (like `10.ease()`), `int` and `double` nums will use `EaseValue` which is based on `double`.
+Is up to you to map the value to `int`: (example:  `height().round()`, or `height().toInt()`).
 
-final bgColor = EulerColor( Colors.red );
-final bgColor = Colors.red.euler();
+
+```dart
+final height = EaseValue( 30 );
+///or the extension approach.
+final height = 30.ease();
+
+final bgColor = EaseColor( Colors.red );
+final bgColor = Colors.red.ease();
 ```
 _You can configure the `target` value, and other motion properties right away in both declarations._
 
@@ -66,6 +80,50 @@ or better yet:
 `height.set( 10 );`
 
 
+## Springs Motion:
+
+Much like `EaseValue`, `SpringValue` is another type of motion, just play with the paramters.
+Watch out the `minDistance`, probably for drastic bouncing, you will need to provide a very small 
+number (like .0001)... use at discretion, and experiment with the values.
+
+```dart
+final height = SpringValue(10);
+
+final height = 10.spring()
+```
+
+Here's an example of a __bouncing button__.
+
+```dart
+class SpringyButton extends StatelessWidget {
+  final Widget child;
+  final double pressScale;
+  SpringyButton({
+    Key? key,
+    required this.child,
+    this.pressScale = 0.75,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final scaleValue = 1.spring(minDistance: .00025, spring: .1);
+    return GestureDetector(
+      onTapDown: (e) => scaleValue.to(pressScale, friction: .85),
+      onTapUp: (e) => scaleValue.to(1, friction: .92),
+      onTapCancel: () => scaleValue.to(1, friction: .92),
+      child: MotionBuilder(
+        builder: (BuildContext context, Widget? child) => Transform.scale(
+          transformHitTests: false,
+          scale: scaleValue(),
+          child: child,
+        ),
+        child: child,
+      ),
+    );
+  }
+}
+```
+
 ## The Widgets:
 
 `MotionValue` is a ChangeNotifier, so you can use `AnimationBuilder`:
@@ -74,8 +132,8 @@ or better yet:
 ```dart
 @override
   Widget build(BuildContext context) {
-    final height = 24.0.euler(target: 120, ease: 23);
-    final bgColor = Colors.black12.euler(ease: 45);
+    final height = 24.0.ease(target: 120, ease: 23);
+    final bgColor = Colors.black12.ease(ease: 45);
     bgColor.to(Colors.red);
 
     /// delay() is defined in seconds, will deactivate the ticker call until it hits the timeout. 
