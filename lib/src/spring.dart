@@ -1,9 +1,21 @@
 part of just_motion;
 
+/// Base class for `Springs`.
 abstract class SpringBase<T> extends MotionValue<T> with CommonBaseMotion {
+  /// Spring factor..
   double spring = 0.1;
+
+  /// `friction` helps the `value` to settle down on target, as acceleration
+  /// gets reduced.
   double friction = .95;
+
+  /// defines the *stop distance* between target and value..
+  /// When `(target-value).abs() <= minDistance` evaluates true, the
+  /// `value` becomes the `target`, and the motion state is completed,
+  /// so it gets removed from the Ticker.
   double minDistance = .05;
+
+  /// internal velocity change tracking.
   double _velocity = 0.0;
 
   SpringBase(
@@ -18,9 +30,7 @@ abstract class SpringBase<T> extends MotionValue<T> with CommonBaseMotion {
     this.target = target ?? value;
   }
 
-  // @override
-  // void tick(Duration t)
-
+  /// Shortcut method to configure common `SpringValue` properties.
   @override
   T to(
     T target, {
@@ -38,6 +48,7 @@ abstract class SpringBase<T> extends MotionValue<T> with CommonBaseMotion {
   }
 }
 
+/// A concrete implementation of the base Spring, based on `double`.
 class SpringValue extends SpringBase<double> with CommonBaseMotion {
   SpringValue(
     double value, {
@@ -53,9 +64,9 @@ class SpringValue extends SpringBase<double> with CommonBaseMotion {
           minDistance: minDistance,
         );
 
-  // @override
-  // bool get running => _distance.abs() < stopDistance;
-
+  /// Computes the current Spring frame.
+  /// This method is called by `TickerMan` to all `MotionValue`.
+  /// [t] is not used for now.
   @override
   void tick(Duration t) {
     if (isDelayed) return;
@@ -74,6 +85,10 @@ class SpringValue extends SpringBase<double> with CommonBaseMotion {
 }
 
 mixin CommonBaseMotion<T> on MotionValue<T> {
+  /// Ensures the [target] has a new value.
+  /// auto activates() this instance with the Ticker.
+  /// and notify subclasses to update target related properties,
+  /// like `ColorEase()`.
   @override
   set target(T v) {
     if (target == v) return;
@@ -82,6 +97,8 @@ mixin CommonBaseMotion<T> on MotionValue<T> {
     _activate();
   }
 
+  /// returns the [`value`], while proxying the instance into
+  /// a `MotionBuilder()` to notify the existance in the scope.
   @override
   T get value {
     if (MotionValue.proxyNotifier != null) {
@@ -90,6 +107,9 @@ mixin CommonBaseMotion<T> on MotionValue<T> {
     return super.value;
   }
 
+  /// sets a new [value] and notifies any listeners about the [value] change
+  /// in this Listenable.
+  /// also notifying subclasses the update.
   @override
   set value(T v) {
     if (super.value == v) return;
@@ -102,5 +122,6 @@ mixin CommonBaseMotion<T> on MotionValue<T> {
   /// like `EulerColor`.
   void _updateTarget() {}
 
+  /// Must be overwritten in custom subclasses
   void _updateValue() {}
 }
