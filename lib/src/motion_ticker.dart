@@ -20,7 +20,8 @@ class TickerMan {
 
   void _onTick(Duration t) {
     final remover = <MotionValue>{};
-    _motions.forEach((motion) {
+    final _safeMotions = Set.of(_motions);
+    _safeMotions.forEach((motion) {
       motion.tick(t);
       if (motion.completed) {
         remover.add(motion);

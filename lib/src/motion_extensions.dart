@@ -31,7 +31,7 @@ extension MotionOffsetExtension on Offset {
 extension MotionColorExtension on Color {
   EaseColor ease({
     Color? target,
-    double minDistance = 0.1,
+    double minDistance = 4,
     double ease = 0.05,
   }) =>
       EaseColor(

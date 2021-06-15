@@ -27,9 +27,13 @@ mixin MotionDelay {
   }
 }
 
-enum MotionState { idle, target, start, deactivate, delayComplete, moving }
+enum MotionState { idle, target, activate, deactivate, delayComplete, moving }
 
 abstract class MotionValue<T> with ChangeNotifier, MotionDelay {
+  /// MotionValues that will only be consumed as computational for other
+  /// values.
+  bool _dumb = false;
+
   /// used by `Motion` and `MotionBuilder` for the reactive state.
   static _MotionNotifier? proxyNotifier;
 
@@ -54,7 +58,10 @@ abstract class MotionValue<T> with ChangeNotifier, MotionDelay {
   void _setState(MotionState val) {
     if (_state == val) return;
     _state = val;
-    _statusListener?.notifyListeners();
+    if (_statusListener != null) {
+      Future.microtask(() => _statusListener?.notifyListeners());
+    }
+    // _statusListener?.notifyListeners();
   }
 
   late T target, value;
@@ -70,6 +77,7 @@ abstract class MotionValue<T> with ChangeNotifier, MotionDelay {
 
   @override
   void delay(double seconds) {
+    if (_dumb) return;
     if (!completed) _deactivate();
     super.delay(seconds);
   }
@@ -85,24 +93,26 @@ abstract class MotionValue<T> with ChangeNotifier, MotionDelay {
 
   @override
   void dispose() {
+    // target = value;
     cancelDelay();
-    _deactivate();
-    _statusListener?.dispose();
-    target = value;
+    TickerMan.instance.remove(this);
     if (MotionValue.proxyNotifier != null) {
       MotionValue.proxyNotifier!.remove(this);
     }
+    _statusListener?.dispose();
     super.dispose();
   }
 
   void _activate() {
+    if (_dumb) return;
     if (!completed && !isDelayed) {
-      _setState(MotionState.start);
+      _setState(MotionState.activate);
       TickerMan.instance.activate(this);
     }
   }
 
   void _deactivate() {
+    if (_dumb) return;
     _setState(MotionState.deactivate);
     TickerMan.instance.remove(this);
   }

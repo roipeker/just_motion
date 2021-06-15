@@ -14,6 +14,7 @@ abstract class EaseBase<T> extends MotionValue<T> {
     this.minDistance = minDistance;
     this.ease = ease;
     this.target = target ?? value;
+    _updateValue();
   }
 
   /// todo: should it have accessor (get/set)
@@ -28,7 +29,7 @@ abstract class EaseBase<T> extends MotionValue<T> {
 
   @override
   T get value {
-    if (MotionValue.proxyNotifier != null) {
+    if (!_dumb && MotionValue.proxyNotifier != null) {
       MotionValue.proxyNotifier!.add(this);
     }
     return super.value;
@@ -39,7 +40,14 @@ abstract class EaseBase<T> extends MotionValue<T> {
     if (super.value == v) return;
     super.value = v;
     _updateValue();
-    notifyListeners();
+    if (!_dumb) {
+      notifyListeners();
+    }
+    if (v == target) {
+      _setState(MotionState.target);
+    } else {
+      _setState(MotionState.moving);
+    }
   }
 
   @override
@@ -82,7 +90,7 @@ class EaseValue extends EaseBase<double> {
     double distance = target - value;
     if (distance.abs() <= minDistance) {
       value = target;
-      _setState(MotionState.target);
+      // _setState(MotionState.target);
     } else {
       value += (distance * ease) * _dt;
       _setState(MotionState.moving);
@@ -139,23 +147,22 @@ class EaseOffset extends EaseBase<Offset> {
 }
 
 class EaseColor extends EaseBase<Color> {
-  final r = EaseValue(0), g = EaseValue(0), b = EaseValue(0), a = EaseValue(0);
+  final r = EaseValue(0).._dumb = true,
+      g = EaseValue(0).._dumb = true,
+      b = EaseValue(0).._dumb = true,
+      a = EaseValue(0).._dumb = true;
 
   EaseColor(
     Color value, {
     Color? target,
-    double minDistance = 2,
+    double minDistance = 4,
     double ease = 0.05,
   }) : super(
           value,
           target: target,
           minDistance: minDistance,
           ease: ease,
-        ) {
-    /// check the hack.
-    super.value = const Color(0x0);
-    super.value = value;
-  }
+        );
 
   void channelEase({double? r, double? g, double? b, double? a}) {
     if (r != null) this.r.ease = r;
@@ -178,7 +185,8 @@ class EaseColor extends EaseBase<Color> {
       r.minDistance = g.minDistance = b.minDistance = a.minDistance = v;
 
   @override
-  bool get completed => value.value == target.value;
+  bool get completed =>
+      r.completed && g.completed && b.completed && a.completed;
 
   @override
   void _updateTarget() {
@@ -197,8 +205,12 @@ class EaseColor extends EaseBase<Color> {
   }
 
   @override
-  Color get value =>
-      Color.fromARGB(a().round(), r().round(), g().round(), b().round());
+  Color get value {
+    if (MotionValue.proxyNotifier != null) {
+      MotionValue.proxyNotifier!.add(this);
+    }
+    return Color.fromARGB(a().round(), r().round(), g().round(), b().round());
+  }
 
   @override
   void tick(Duration t) {
@@ -209,8 +221,19 @@ class EaseColor extends EaseBase<Color> {
     if (!a.completed) a.tick(t);
     if (r.completed && g.completed && b.completed && a.completed) {
       value = target;
+      _setState(MotionState.target);
     } else {
       notifyListeners();
+      _setState(MotionState.moving);
     }
+  }
+
+  @override
+  void dispose() {
+    r.dispose();
+    g.dispose();
+    b.dispose();
+    a.dispose();
+    super.dispose();
   }
 }

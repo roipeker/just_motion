@@ -1,3 +1,8 @@
+## 0.0.3
+- fix for EaseColor using a "_dumb" flag to avoid expensive notifications.
+- fix default values for `EaseColor`
+- fix MotionTicker, to avoid removing MotionValues while looping.
+- changed some `MotionStates` (can be detected with `addStatusListener()` and using the `state` property.).
 ## 0.0.2
 - cleanup.
 - includes `SpringValue`

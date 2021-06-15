@@ -30,10 +30,24 @@ So, the velocity is proportional to the distance, the further the target, the fa
 
 While on `springs`, acceleration is proportional to the distance... 
 
+
+You can listen to motion states changes:
+
+```dart
+height.addStatusListener((){
+  print(height.state);
+});
+```
+Check `MotionState.values` to see the current avilable states. (Might change in the near future).
+
+### EaseValue
+
+
 Declare a var that you will use to animate some widget property:
 
 > NOTE: When using the `ease()` extension, (like `10.ease()`), `int` and `double` nums will use `EaseValue` which is based on `double`.
 Is up to you to map the value to `int`: (example:  `height().round()`, or `height().toInt()`).
+
 
 
 ```dart
