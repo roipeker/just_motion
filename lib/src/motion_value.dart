@@ -70,7 +70,7 @@ abstract class MotionValue<T> with ChangeNotifier, MotionDelay {
 
   bool get completed => target == value;
 
-  /// time delation factor.
+  /// time dilation factor.
   double get _dt => 1 / timeDilation;
 
   void tick(Duration t);

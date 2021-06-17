@@ -1,6 +1,52 @@
 part of just_motion;
 
+extension MotionRectExtension on Rect {
+  /// extension method for [EaseRect] (`<Rect>`).
+  EaseRect ease({
+    Rect? target,
+    double minDistance = 0.01,
+    double ease = 0.1,
+  }) =>
+      EaseRect(
+        this,
+        target: target,
+        minDistance: minDistance,
+        ease: ease,
+      );
+}
+
+extension MotionBoxConstraintsExtension on BoxConstraints {
+  /// extension method for [EaseBoxConstraints] (`<BoxConstraints>`).
+  EaseBoxConstraints ease({
+    BoxConstraints? target,
+    double minDistance = 0.01,
+    double ease = 0.1,
+  }) =>
+      EaseBoxConstraints(
+        this,
+        target: target,
+        minDistance: minDistance,
+        ease: ease,
+      );
+}
+
+extension MotionInsetsExtension on EdgeInsets {
+  /// extension method for [EaseInsets] (`<EdgeInsets>`).
+  EaseInsets ease({
+    EdgeInsets? target,
+    double minDistance = 0.01,
+    double ease = 0.1,
+  }) =>
+      EaseInsets(
+        this,
+        target: target,
+        minDistance: minDistance,
+        ease: ease,
+      );
+}
+
 extension MotionAlignmentExtension on Alignment {
+  /// extension method for [EaseAlignment] (`<Alignment>`).
   EaseAlignment ease({
     Alignment? target,
     double minDistance = 0.01,
@@ -15,6 +61,7 @@ extension MotionAlignmentExtension on Alignment {
 }
 
 extension MotionOffsetExtension on Offset {
+  /// extension method for [EaseOffset] (`<Offset>`).
   EaseOffset ease({
     Offset? target,
     double minDistance = 0.01,
@@ -29,6 +76,7 @@ extension MotionOffsetExtension on Offset {
 }
 
 extension MotionColorExtension on Color {
+  /// extension method for [EaseColor] (`<Color>`).
   EaseColor ease({
     Color? target,
     double minDistance = 4,
@@ -43,6 +91,7 @@ extension MotionColorExtension on Color {
 }
 
 extension MotionDoubleExtension on num {
+  /// extension method for [EaseValue] (`<num>` but outputs `double`).
   EaseValue ease({
     num? target,
     double minDistance = 0.1,
@@ -55,6 +104,7 @@ extension MotionDoubleExtension on num {
         ease: ease,
       );
 
+  /// extension method for [SpringValue] (`<num>` but outputs `double`).
   SpringValue spring({
     num? target,
     double minDistance = 0.05,

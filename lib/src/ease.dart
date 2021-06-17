@@ -64,6 +64,15 @@ abstract class EaseBase<T> extends MotionValue<T> {
     return this.value;
   }
 
+  /// Accessible shortcut to ease individual properties of complex objects.
+  /// returns `target` for `minDistance` hit, or invalid values.
+  double _easeValue(double value, double target) {
+    if (value == target || value.isInfinite || value.isNaN) return target;
+    var dx = target - value;
+    if (dx.abs() <= minDistance) return target;
+    return value + (dx * ease) * _dt;
+  }
+
   /// Must be overwritten in custom subclasses
   /// like `EulerColor`.
   void _updateTarget() {}
@@ -139,6 +148,96 @@ class EaseOffset extends EaseBase<Offset> {
   void tick(Duration t) {
     Offset distance = target - value;
     if (distance.dx.abs() <= minDistance && distance.dy.abs() <= minDistance) {
+      value = target;
+    } else {
+      value += (distance * ease) * _dt;
+    }
+  }
+}
+
+class EaseRect extends EaseBase<Rect> {
+  EaseRect(
+    Rect value, {
+    Rect? target,
+    double minDistance = 0.1,
+    double ease = 0.1,
+  }) : super(
+          value,
+          target: target,
+          minDistance: minDistance,
+          ease: ease,
+        );
+
+  @override
+  void tick(Duration t) {
+    final _temp = Rect.fromLTRB(
+      _easeValue(value.left, target.left),
+      _easeValue(value.top, target.top),
+      _easeValue(value.right, target.right),
+      _easeValue(value.top, target.bottom),
+    );
+    if (_temp == target) {
+      value = target;
+    } else {
+      value = _temp;
+    }
+  }
+}
+
+/// Generates an ease transition between BoxConstraints.
+/// When an invalid transition value (double), like `NaN` or `infinite`,
+/// is used on [BoxConstraints.minWidth], [BoxConstraints.minHeight],
+/// [BoxConstraints.maxWidth] or [BoxConstraints.maxHeight], the
+/// [EaseBoxConstraints.value] property will be set to [EaseBoxConstraints.target] one.
+class EaseBoxConstraints extends EaseBase<BoxConstraints> {
+  EaseBoxConstraints(
+    BoxConstraints value, {
+    BoxConstraints? target,
+    double minDistance = 0.1,
+    double ease = 0.1,
+  }) : super(
+          value,
+          target: target,
+          minDistance: minDistance,
+          ease: ease,
+        );
+
+  @override
+  void tick(Duration t) {
+    final _temp = value.copyWith(
+      minWidth: _easeValue(value.minWidth, target.minWidth),
+      minHeight: _easeValue(value.minHeight, target.minHeight),
+      maxWidth: _easeValue(value.maxWidth, target.maxWidth),
+      maxHeight: _easeValue(value.maxHeight, target.maxHeight),
+    );
+    if (_temp == target) {
+      value = target;
+    } else {
+      value = _temp;
+    }
+  }
+}
+
+class EaseInsets extends EaseBase<EdgeInsets> {
+  EaseInsets(
+    EdgeInsets value, {
+    EdgeInsets? target,
+    double minDistance = 0.1,
+    double ease = 0.1,
+  }) : super(
+          value,
+          target: target,
+          minDistance: minDistance,
+          ease: ease,
+        );
+
+  @override
+  void tick(Duration t) {
+    final distance = target - value;
+    if (distance.left.abs() <= minDistance &&
+        distance.right.abs() <= minDistance &&
+        distance.top.abs() <= minDistance &&
+        distance.bottom.abs() <= minDistance) {
       value = target;
     } else {
       value += (distance * ease) * _dt;

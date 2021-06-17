@@ -98,7 +98,7 @@ mixin CommonBaseMotion<T> on MotionValue<T> {
   }
 
   /// returns the [`value`], while proxying the instance into
-  /// a `MotionBuilder()` to notify the existance in the scope.
+  /// a `MotionBuilder()` to notify the existence in the scope.
   @override
   T get value {
     if (MotionValue.proxyNotifier != null) {

@@ -1,9 +1,14 @@
 part of just_motion;
 
-typedef Widget WidgetBuilderContextless();
+typedef Widget MotionCallback();
 
+/// Reactively calls the [builder] callback, detecting [MotionValue] references
+/// inside it's scope.
+/// Unlike [MotionBuilder] doesn't cache a `child`, nor pass the `context` to the
+/// `builder` callback.
+/// Might be used on 'leaf' widgets.
 class Motion extends StatelessWidget {
-  final WidgetBuilderContextless builder;
+  final MotionCallback builder;
 
   const Motion(this.builder, {Key? key}) : super(key: key);
 
@@ -13,6 +18,11 @@ class Motion extends StatelessWidget {
       );
 }
 
+/// Reactively calls [builder], detecting [MotionValue] references
+/// inside it's scope.
+/// Accepts a [child] parameter to optimize the rendering.
+/// [MotionBuilder] can be used as a reactive alternative to
+/// [AnimatedBuilder]
 class MotionBuilder extends StatefulWidget {
   final TransitionBuilder builder;
   final Widget? child;
@@ -42,13 +52,10 @@ class _MotionBuilderState extends State<MotionBuilder> {
     }
   }
 
-  Widget _buildWidget(BuildContext context, Widget? child) =>
-      widget.builder(context, child);
-
   Widget notifyChild(BuildContext context, Widget? child) {
     final oldNotifier = MotionValue.proxyNotifier;
     MotionValue.proxyNotifier = notifier;
-    final result = _buildWidget(context, child);
+    final result = widget.builder(context, child);
     MotionValue.proxyNotifier = oldNotifier;
     return result;
   }

@@ -1,8 +1,16 @@
+## 0.0.4+12
+- add some code docs.
+- add `EaseRect`, `EaseBoxConstraints`, `EaseInsets` with their extensions .
+- add `EaseBase._easeValue()` to facilitate easing in complex types.
+- add build number to version, to avoid modifying min version for docs and readme changes.
+- add `flutter_lints` package for analysis.
+
 ## 0.0.3
 - fix for EaseColor using a "_dumb" flag to avoid expensive notifications.
 - fix default values for `EaseColor`
 - fix MotionTicker, to avoid removing MotionValues while looping.
 - changed some `MotionStates` (can be detected with `addStatusListener()` and using the `state` property.).
+
 ## 0.0.2
 - cleanup.
 - includes `SpringValue`

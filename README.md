@@ -1,6 +1,6 @@
 # just.motion
 
-Flutter package to create organic motion transitions using basic numeric integrations.
+Flutter package to create organic motion transitions.
 
 - [Why?](#why?)
 - [The Motion Value](#the-motion-value)
@@ -32,7 +32,7 @@ Here's how it works:
 
 Basic _easing_ is a well known technique in games for light computation of movements, is based on proportional velocity, and his cousin, _spring_, is based on proportional acceleration.
 
-You set a `target` value, `MotionValue` calculates the distance, and the motion it generates is proportional to the distance, the bigger distance, more motion.
+You set a `target` value, `MotionValue` calculates the distance, and the movement it applies is proportional to the distance: bigger distance, faster the motion.
 
 So, as _acceleration_ is proportional to the distance, the further the target, the faster the value moves, as it gets closer and closer to the target, it hardly changes the value... that's why you can configure `minDistance` to tell the motion when is time to stop.
 
