@@ -38,14 +38,28 @@ So, as _acceleration_ is proportional to the distance, the further the target, t
 
 While on `springs`, the _acceleration_ is proportional to the distance, if `target` is far away from `value`, a lot of acceleration is provided, increasing the _velocity_ very quickly. Unlike _easing_, as the `value` approaches the `target`, less and less acceleration is applied, but still has an ongoing acceleration, as it flies pass the `target`, the acceleration pulls it back, while `friction` helps the `value` to settle down.
 
-You can listen to motion states changes:
+In `MotionValues` you can listen to status changes:
 
 ```dart
 height.addStatusListener((){
-  print(height.state);
+  print(height.status);
 });
 ```
-Check `MotionState.values` to see the current avilable states. (Might change in the near future).
+
+Check `MotionStatus.values` to see the current available status. (Might slightly change in the near future).
+
+Currently available status:
+```dart
+enum MotionStatus {
+  idle, /// initial status, without target.
+  target, /// when value reaches target.
+  activate, /// when target != value, and object is added in the ticker.
+  deactivate, /// when a `delay()` is called while `target!=value` (moving status)
+  delayComplete,  /// when a `delay()` ends, and moving starts.
+  moving, /// while `value` is moving towards `target`.
+  disposed  /// when the `MotionValue` is disposed from memory (can't be used again).  
+}
+```
 
 ### Ease Motion
 

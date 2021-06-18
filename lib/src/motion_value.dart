@@ -130,7 +130,6 @@ abstract class MotionValue<T> with ChangeNotifier, MotionDelay {
   void _activate() {
     if (_dumb) return;
     if (!completed && !isDelayed) {
-      // print('activate?! $hashCode // $_status');
       _setStatus(MotionStatus.activate);
       TickerMan.instance.activate(this);
     }

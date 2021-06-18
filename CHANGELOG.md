@@ -1,3 +1,6 @@
+## 0.0.6+23
+- improve docs and readme.
+
 ## 0.0.6+22
 - renamed `MotionState` to `MotionStatus`, to keep it idiomatic with Flutter's `AnimationController`.
 - renamed `motion.state` to `motion.status`.
