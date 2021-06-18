@@ -1,3 +1,7 @@
+## 0.0.5+15
+- `MotionValue` forced to dispose on `reassembling` (hot-reload).
+- add some code docs.
+
 ## 0.0.4+12
 - add some code docs.
 - add `EaseRect`, `EaseBoxConstraints`, `EaseInsets` with their extensions .

@@ -100,11 +100,14 @@ class _MotionNotifier {
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) => stateSetter());
   }
 
-  void dispose() {
+  /// Clears the instance data.
+  /// Optionally pass `reassembling=true` to force the motions disposing
+  /// (usually useful for hot-reload).
+  void dispose([bool reassembling = false]) {
     /// stop motions from running.
     _motions.forEach((motion) {
       if (motion is MotionValue) {
-        motion._widgetDeactivate();
+        motion._widgetDeactivate(reassembling);
       }
     });
     animations = emptyListener;

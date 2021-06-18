@@ -17,8 +17,7 @@ abstract class EaseBase<T> extends MotionValue<T> {
     _updateValue();
   }
 
-  /// todo: should it have accessor (get/set)
-  /// on MotionVal?
+  /// Todo: should it have accessor (get/set) on `MotionValue`?
   @override
   set target(T v) {
     if (target == v) return;

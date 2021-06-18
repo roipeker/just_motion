@@ -32,6 +32,7 @@ enum MotionState { idle, target, activate, deactivate, delayComplete, moving }
 abstract class MotionValue<T> with ChangeNotifier, MotionDelay {
   /// MotionValues that will only be consumed as computational for other
   /// values.
+  /// Check [EaseColor]
   bool _dumb = false;
 
   /// used by `Motion` and `MotionBuilder` for the reactive state.
@@ -121,6 +122,8 @@ abstract class MotionValue<T> with ChangeNotifier, MotionDelay {
     this.value = this.target = val;
   }
 
+  /// Callable instance, optionally sets the [target].
+  /// Always returns the current [value].
   T call([T? v]) {
     if (v != null) {
       this.target = v;
@@ -128,6 +131,8 @@ abstract class MotionValue<T> with ChangeNotifier, MotionDelay {
     return value;
   }
 
+  /// Shortcut to assign the [target], with the ability
+  /// of settings the [delay] (in seconds).
   T to(T target, {double? delay}) {
     this.target = target;
     if (delay != null) {
@@ -136,8 +141,10 @@ abstract class MotionValue<T> with ChangeNotifier, MotionDelay {
     return this.value;
   }
 
-  void _widgetDeactivate() {
-    if (!hasListeners) {
+  /// If [reassembling] (hot reload) force the
+  /// disposal of the instance to unregister from [TickerMan].
+  void _widgetDeactivate(bool reassembling) {
+    if (!hasListeners || reassembling) {
       dispose();
     }
   }
