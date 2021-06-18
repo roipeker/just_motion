@@ -16,6 +16,7 @@ class TickerMan {
   late Ticker _ticker = Ticker(_onTick);
   final _motions = <MotionValue>{};
 
+  Set<MotionValue> get motions => _motions;
   void isActive() => _ticker.isActive;
 
   /// Stops the the `Ticker` provider

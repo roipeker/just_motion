@@ -5,6 +5,7 @@ abstract class EaseBase<T> extends MotionValue<T> {
 
   EaseBase(
     T value, {
+    String? id,
     T? target,
     double minDistance = .01,
     double ease = 0.1,
@@ -28,8 +29,8 @@ abstract class EaseBase<T> extends MotionValue<T> {
 
   @override
   T get value {
-    if (!_dumb && MotionValue.proxyNotifier != null) {
-      MotionValue.proxyNotifier!.add(this);
+    if (!_dumb && MotionValue._proxyNotifier != null) {
+      MotionValue._proxyNotifier!.add(this);
     }
     return super.value;
   }
@@ -43,9 +44,9 @@ abstract class EaseBase<T> extends MotionValue<T> {
       notifyListeners();
     }
     if (v == target) {
-      _setState(MotionState.target);
+      _setStatus(MotionStatus.target);
     } else {
-      _setState(MotionState.moving);
+      _setStatus(MotionStatus.moving);
     }
   }
 
@@ -80,6 +81,12 @@ abstract class EaseBase<T> extends MotionValue<T> {
 }
 
 class EaseValue extends EaseBase<double> {
+  @override
+  String toString() {
+    final statusString = '$status'.split('.')[1];
+    return '$runtimeType#$hashCode status=$statusString, value=~${value.toStringAsPrecision(2)}, target=${target.toStringAsPrecision(2)}';
+  }
+
   EaseValue(
     double value, {
     double? target,
@@ -101,7 +108,7 @@ class EaseValue extends EaseBase<double> {
       // _setState(MotionState.target);
     } else {
       value += (distance * ease) * _dt;
-      _setState(MotionState.moving);
+      _setStatus(MotionStatus.moving);
     }
   }
 }
@@ -304,8 +311,8 @@ class EaseColor extends EaseBase<Color> {
 
   @override
   Color get value {
-    if (MotionValue.proxyNotifier != null) {
-      MotionValue.proxyNotifier!.add(this);
+    if (MotionValue._proxyNotifier != null) {
+      MotionValue._proxyNotifier!.add(this);
     }
     return Color.fromARGB(a().round(), r().round(), g().round(), b().round());
   }
@@ -319,10 +326,10 @@ class EaseColor extends EaseBase<Color> {
     if (!a.completed) a.tick(t);
     if (r.completed && g.completed && b.completed && a.completed) {
       value = target;
-      _setState(MotionState.target);
+      _setStatus(MotionStatus.target);
     } else {
       notifyListeners();
-      _setState(MotionState.moving);
+      _setStatus(MotionStatus.moving);
     }
   }
 

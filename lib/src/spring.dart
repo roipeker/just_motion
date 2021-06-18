@@ -2,6 +2,12 @@ part of just_motion;
 
 /// Base class for `Springs`.
 abstract class SpringBase<T> extends MotionValue<T> with CommonBaseMotion {
+  @override
+  String toString() {
+    final statusString = '$status'.split('.')[1];
+    return '$runtimeType#$hashCode status=$statusString, spring=$spring, friction=$friction';
+  }
+
   /// Spring factor..
   double spring = 0.1;
 
@@ -50,6 +56,12 @@ abstract class SpringBase<T> extends MotionValue<T> with CommonBaseMotion {
 
 /// A concrete implementation of the base Spring, based on `double`.
 class SpringValue extends SpringBase<double> with CommonBaseMotion {
+  @override
+  String toString() {
+    final statusString = '$status'.split('.')[1];
+    return '$runtimeType#$hashCode status=$statusString, value=~${value.toStringAsPrecision(2)}, target=${target.toStringAsPrecision(2)}, spring=$spring, friction=$friction';
+  }
+
   SpringValue(
     double value, {
     double? target,
@@ -73,13 +85,13 @@ class SpringValue extends SpringBase<double> with CommonBaseMotion {
     var distance = target - value;
     if (distance.abs() <= minDistance) {
       value = target;
-      _setState(MotionState.target);
+      _setStatus(MotionStatus.target);
     } else {
       var acc = distance * spring;
       _velocity += acc;
       _velocity *= friction;
       value += _velocity * _dt;
-      _setState(MotionState.moving);
+      _setStatus(MotionStatus.moving);
     }
   }
 }
@@ -101,8 +113,8 @@ mixin CommonBaseMotion<T> on MotionValue<T> {
   /// a `MotionBuilder()` to notify the existence in the scope.
   @override
   T get value {
-    if (MotionValue.proxyNotifier != null) {
-      MotionValue.proxyNotifier!.add(this);
+    if (MotionValue._proxyNotifier != null) {
+      MotionValue._proxyNotifier!.add(this);
     }
     return super.value;
   }

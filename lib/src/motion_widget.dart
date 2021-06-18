@@ -15,6 +15,7 @@ class Motion extends StatelessWidget {
   @override
   Widget build(BuildContext context) => MotionBuilder(
         builder: (_, __) => builder(),
+        key: key,
       );
 }
 
@@ -42,8 +43,24 @@ class _MotionBuilderState extends State<MotionBuilder> {
 
   @override
   void dispose() {
-    notifier.dispose();
+    notifier.dispose(false);
     super.dispose();
+  }
+
+  @override
+  void reassemble() {
+    notifier.dispose(true);
+    super.reassemble();
+  }
+
+  /// Will dispose() current running instances when the Widget rebuilds
+  /// This is an uncommon approach, as you should not initialize [MotionValue]
+  /// in a Widget `build()`. But it helps to prevent memory leaks with orphan
+  /// objects owned by the [_MotionNotifier] and [TickerMan].
+  @override
+  void didUpdateWidget(MotionBuilder oldWidget) {
+    notifier._dirtyWidget = true;
+    super.didUpdateWidget(oldWidget);
   }
 
   void update() {
@@ -53,10 +70,14 @@ class _MotionBuilderState extends State<MotionBuilder> {
   }
 
   Widget notifyChild(BuildContext context, Widget? child) {
-    final oldNotifier = MotionValue.proxyNotifier;
-    MotionValue.proxyNotifier = notifier;
+    final oldNotifier = MotionValue._proxyNotifier;
+    MotionValue._proxyNotifier = notifier;
+    if (notifier._dirtyWidget) {
+      notifier.dirtyWidgetPrebuild();
+    }
     final result = widget.builder(context, child);
-    MotionValue.proxyNotifier = oldNotifier;
+    notifier._dirtyWidget = false;
+    MotionValue._proxyNotifier = oldNotifier;
     return result;
   }
 
@@ -73,12 +94,30 @@ class _MotionNotifier {
 
   Listenable animations = emptyListener;
   final VoidCallback stateSetter;
-  final _motions = <Listenable>{};
+  final Set<MotionValue> _motions = <MotionValue>{};
+  Set<MotionValue>? _cachedMotions;
+
+  bool _dirtyWidget = false;
 
   _MotionNotifier(this.stateSetter);
 
+  void dirtyWidgetPrebuild() {
+    _cachedMotions = Set.from(_motions);
+  }
+
   void add(MotionValue motion) {
     if (!_motions.contains(motion)) {
+      if (_cachedMotions != null &&
+          _dirtyWidget &&
+          _cachedMotions!.isNotEmpty) {
+        final _cached = _cachedMotions!;
+        for (var m in _cached) {
+          m.dispose();
+        }
+        _motions.removeAll(_cached);
+        _cached.clear();
+        _cachedMotions = null;
+      }
       _motions.add(motion);
       _updateCollection();
     }
@@ -112,5 +151,7 @@ class _MotionNotifier {
     });
     animations = emptyListener;
     _motions.clear();
+    _cachedMotions?.clear();
+    _cachedMotions = null;
   }
 }

@@ -27,7 +27,15 @@ mixin MotionDelay {
   }
 }
 
-enum MotionState { idle, target, activate, deactivate, delayComplete, moving }
+enum MotionStatus {
+  idle,
+  target,
+  activate,
+  deactivate,
+  delayComplete,
+  moving,
+  disposed
+}
 
 abstract class MotionValue<T> with ChangeNotifier, MotionDelay {
   /// MotionValues that will only be consumed as computational for other
@@ -36,13 +44,14 @@ abstract class MotionValue<T> with ChangeNotifier, MotionDelay {
   bool _dumb = false;
 
   /// used by `Motion` and `MotionBuilder` for the reactive state.
-  static _MotionNotifier? proxyNotifier;
+  static _MotionNotifier? _proxyNotifier;
 
   ChangeNotifier? _statusListener;
 
   @override
   String toString() {
-    return '$value / $target';
+    final statusString = '$status'.split('.')[1];
+    return '$runtimeType#$hashCode, status=$statusString, value=$value, target=$target';
   }
 
   void removeStatusListener(VoidCallback listener) {
@@ -54,15 +63,28 @@ abstract class MotionValue<T> with ChangeNotifier, MotionDelay {
     _statusListener!.addListener(listener);
   }
 
-  late MotionState _state = MotionState.idle;
-  MotionState get state => _state;
-  void _setState(MotionState val) {
-    if (_state == val) return;
-    _state = val;
+  late MotionStatus _status = MotionStatus.idle;
+
+  MotionStatus get status => _status;
+
+  /// shorthand to set the [MotionStatus], and avoid duplicated notifications.
+  /// Prevent duplicates doesn't apply to [MotionStatus.moving].
+  void _setStatus(MotionStatus val) {
+    if (_status == val && val != MotionStatus.moving) return;
+    _status = val;
     if (_statusListener != null) {
-      Future.microtask(() => _statusListener?.notifyListeners());
+      /// This is for pending testing,
+      /// If _notify_ throws, check the commented code below with
+      /// microtask.
+      _statusListener?.notifyListeners();
+
+      /// No next frame will be available.
+      // if (val == MotionStatus.disposed) {
+      //   _statusListener?.notifyListeners();
+      // } else {
+      //   // Future.microtask(() => _statusListener?.notifyListeners());
+      // }
     }
-    // _statusListener?.notifyListeners();
   }
 
   late T target, value;
@@ -86,7 +108,7 @@ abstract class MotionValue<T> with ChangeNotifier, MotionDelay {
   @override
   void onDelayComplete() {
     super.onDelayComplete();
-    _setState(MotionState.delayComplete);
+    _setStatus(MotionStatus.delayComplete);
     if (!completed) {
       _activate();
     }
@@ -94,27 +116,29 @@ abstract class MotionValue<T> with ChangeNotifier, MotionDelay {
 
   @override
   void dispose() {
-    // target = value;
+    _setStatus(MotionStatus.disposed);
     cancelDelay();
     TickerMan.instance.remove(this);
-    if (MotionValue.proxyNotifier != null) {
-      MotionValue.proxyNotifier!.remove(this);
+    if (MotionValue._proxyNotifier != null) {
+      MotionValue._proxyNotifier!.remove(this);
     }
     _statusListener?.dispose();
+    _statusListener = null;
     super.dispose();
   }
 
   void _activate() {
     if (_dumb) return;
     if (!completed && !isDelayed) {
-      _setState(MotionState.activate);
+      // print('activate?! $hashCode // $_status');
+      _setStatus(MotionStatus.activate);
       TickerMan.instance.activate(this);
     }
   }
 
   void _deactivate() {
     if (_dumb) return;
-    _setState(MotionState.deactivate);
+    _setStatus(MotionStatus.deactivate);
     TickerMan.instance.remove(this);
   }
 
