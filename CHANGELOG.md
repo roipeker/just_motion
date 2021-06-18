@@ -1,3 +1,6 @@
+## 0.0.6+24
+- improve readme.
+
 ## 0.0.6+23
 - improve docs and readme.
 

@@ -242,7 +242,7 @@ When you initialize a motion object, **and set a target** different than the `va
 
 In the meantime, if you wanna use it and help me improve it, you should be using dart >= 2.12
 
-Just use this repo url in your _pubspec.yaml_
+- Just use this repo url in your _pubspec.yaml_
 
 ```yaml
 dependencies:
@@ -250,7 +250,19 @@ dependencies:
     git: https://github.com/roipeker/just_motion.git
 ```
 
-And import **just_motion** in your code:
+- To use a specific version, check the _commits_ [at the top of the page](https://github.com/roipeker/just_motion), and use the specific **commit** hash.
+For example, for [v0.0.6+23](https://github.com/roipeker/just_motion/commit/c6ee99cbffce216e0c4587c1005f4104057d44a3)
+```yaml
+dependencies:
+  just_motion:
+    git:
+      url: https://github.com/roipeker/just_motion.git
+      ref: c6ee99cbffce216e0c4587c1005f4104057d44a3
+```
+
+- Run `flutter pub get`
+
+- Then import **just_motion** in your code:
 
 ```dart
 import 'package:just_motion/just_motion.dart';
