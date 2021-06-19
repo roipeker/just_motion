@@ -48,6 +48,10 @@ abstract class MotionValue<T> with ChangeNotifier, MotionDelay {
 
   ChangeNotifier? _statusListener;
 
+  /// disposes this instance when [Motion] or [MotionBuilder] reassembles.
+  /// Set it to true when defining this var inside a `build(BuildContext)` scope.
+  bool stateless = false;
+
   @override
   String toString() {
     final statusString = '$status'.split('.')[1];
@@ -164,10 +168,11 @@ abstract class MotionValue<T> with ChangeNotifier, MotionDelay {
     return this.value;
   }
 
-  /// If [reassembling] (hot reload) force the
-  /// disposal of the instance to unregister from [TickerMan].
+  /// If using [Motion] or [MotionBuilder] Widget, when _reassembling_
+  /// (hot reload) if this instance is flagged to be "created" in a Stateless
+  /// widget (with `stateless=true`), dispose the instance to unregister from [TickerMan].
   void _widgetDeactivate(bool reassembling) {
-    if (!hasListeners || reassembling) {
+    if (!hasListeners || (reassembling && stateless)) {
       dispose();
     }
   }

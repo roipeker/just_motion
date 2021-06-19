@@ -1,6 +1,6 @@
 name: just_motion
 description: Create organic motion transitions in a reactive way using basic easing in Flutter.
-version: 0.0.6+24
+version: 0.0.7+28
 homepage: https://roipeker.com
 
 environment:

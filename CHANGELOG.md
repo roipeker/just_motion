@@ -1,3 +1,8 @@
+## 0.0.7+28
+- added `MotionValue.stateless` to tell just_motion when the variable only exists inside the `build(BuildContext)` function scope, in a StatelessWidget.
+  Set `motion.stateless = true`, in that situation to support auto-disposal on hot-reload.
+- improve readme and code docs.
+
 ## 0.0.6+24
 - improve readme.
 
@@ -42,6 +47,5 @@
 - `ease()` will accept `num` (int or double) for value/target, but treats all as `double`. Make sure to convert double to int if you consume it that way (`round()`, `ceil()`, `floor()`, `toInt()`, etc).
 
 ## 0.0.1
-
 - basic initial alpha release.
 `MotionValue` API will likely change.

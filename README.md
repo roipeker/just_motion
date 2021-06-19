@@ -4,6 +4,8 @@ Flutter package to create organic motion transitions.
 
 - [Why?](#why?)
 - [The Motion Value](#the-motion-value)
+  - [stateless hot reload](#stateless-hot-reload)
+  - [status notifier](#status-notifier)
 - [Ease Motion](#ease-motion)
 - [Spring Motion](#spring-motion)
 - [The Widgets](#the-widgets)
@@ -38,6 +40,8 @@ So, as _acceleration_ is proportional to the distance, the further the target, t
 
 While on `springs`, the _acceleration_ is proportional to the distance, if `target` is far away from `value`, a lot of acceleration is provided, increasing the _velocity_ very quickly. Unlike _easing_, as the `value` approaches the `target`, less and less acceleration is applied, but still has an ongoing acceleration, as it flies pass the `target`, the acceleration pulls it back, while `friction` helps the `value` to settle down.
 
+#### Status notifier
+
 In `MotionValues` you can listen to status changes:
 
 ```dart
@@ -60,6 +64,18 @@ enum MotionStatus {
   disposed  /// when the `MotionValue` is disposed from memory (can't be used again).  
 }
 ```
+
+#### Stateless hot reload
+When you create a `MotionValue` in a StatelessWidget, or inside a `build(BuildContext)` scope. You should notify **just.motion** to auto dispose the variable for hot-reload.
+
+Use `MotionValue.stateless` for that. It will assure the disposal of the instance from the running Ticker:
+
+```dart
+final height = 10.ease( target: 20, stateless: true);
+```
+>  `stateless` only works when using `Motion` or `MotionBuilder` widgets, not with `AnimatedBuilder`. 
+
+
 
 ### Ease Motion
 
@@ -140,7 +156,7 @@ class SpringyButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scaleValue = 1.spring(minDistance: .00025, spring: .1);
+    final scaleValue = 1.spring(minDistance: .00025, spring: .1, stateless:true);
     return GestureDetector(
       onTapDown: (e) => scaleValue.to(pressScale, friction: .85),
       onTapUp: (e) => scaleValue.to(1, friction: .92),
@@ -166,6 +182,7 @@ class SpringyButton extends StatelessWidget {
 ```dart
 @override
   Widget build(BuildContext context) {
+    /// Warning: you will not be able to dispose these variables on hot-reload. 
     final height = 24.0.ease(target: 120, ease: 23);
     final bgColor = Colors.black12.ease(ease: 45);
     bgColor.to(Colors.red);
