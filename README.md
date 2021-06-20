@@ -132,7 +132,7 @@ or better yet:
 
 ## Spring Motion
 
-Much like `EaseValue`, `SpringValue` is another type of motion, just play with the paramters.
+Much like `EaseValue`, `SpringValue` is another type of motion, just play with the parameters.
 Watch out the `minDistance`, probably for drastic bouncing, you will need to provide a very small 
 number (like .0001)... use at discretion, and experiment with the values.
 
