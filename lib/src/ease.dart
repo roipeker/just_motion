@@ -53,7 +53,7 @@ abstract class EaseBase<T> extends MotionValue<T> {
   @override
   T to(
     T target, {
-    double? delay,
+    Duration? delay,
     double? minDistance,
     double? ease,
   }) {

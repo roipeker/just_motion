@@ -10,10 +10,10 @@ mixin MotionDelay {
     _delay = null;
   }
 
-  void delay(double seconds) {
+  void delay(Duration duration) {
     cancelDelay();
     _delay = Timer(
-      Duration(milliseconds: (seconds * 1000).round()),
+      duration,
       onDelayComplete,
     );
   }
@@ -103,10 +103,10 @@ abstract class MotionValue<T> with ChangeNotifier, MotionDelay {
   void tick(Duration t);
 
   @override
-  void delay(double seconds) {
+  void delay(Duration duration) {
     if (_dumb) return;
     if (!completed) _deactivate();
-    super.delay(seconds);
+    super.delay(duration);
   }
 
   @override
@@ -160,7 +160,7 @@ abstract class MotionValue<T> with ChangeNotifier, MotionDelay {
 
   /// Shortcut to assign the [target], with the ability
   /// of settings the [delay] (in seconds).
-  T to(T target, {double? delay}) {
+  T to(T target, {Duration? delay}) {
     this.target = target;
     if (delay != null) {
       this.delay(delay);
