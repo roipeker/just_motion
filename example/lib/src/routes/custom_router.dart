@@ -6,16 +6,18 @@ import 'route_names.dart';
 
 abstract class CustomRouter {
   static Route<dynamic>? onGenerateRoute(RouteSettings settings) {
-    return CupertinoPageRoute(builder: (ctx) => onRoute(settings));
+    return CupertinoPageRoute(builder: onRoute(settings));
   }
 
-  static Widget onRoute(RouteSettings settings) {
+  static WidgetBuilder onRoute(RouteSettings settings) {
     switch (settings.name) {
       case RouteName.main:
-        return HomePage();
+        return (_) => HomePage();
       case RouteName.list:
-        return ListPage();
+        return (_) => ListPage();
+      case RouteName.floatingActionButtonMenu:
+        return (_) => ExampleExpandableFab();
     }
-    return const SizedBox.shrink();
+    return (_) => const SizedBox.shrink();
   }
 }

@@ -1,3 +1,4 @@
+import 'package:example/src/pages/home/widgets/widgets.dart';
 import 'package:example/src/routes/route_names.dart';
 import 'package:flutter/material.dart';
 
@@ -14,10 +15,13 @@ class HomePage extends StatelessWidget {
         child: ListView(
           padding: const EdgeInsets.all(16.0),
           children: [
-            ListTile(
-              onTap: () => Navigator.of(context).pushNamed(RouteName.list),
-              title: const Text('List items'),
-              trailing: const Icon(Icons.arrow_forward_ios),
+            HomePageListItem(
+              title: 'List items',
+              route: RouteName.list,
+            ),
+            HomePageListItem(
+              title: 'Floating Action Button Menu',
+              route: RouteName.floatingActionButtonMenu,
             ),
           ],
         ),
