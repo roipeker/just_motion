@@ -1,10 +1,7 @@
-import 'package:example/src/pages/list/widgets/color_widget.dart';
-import 'package:example/src/pages/list/widgets/height_widget.dart';
-import 'package:example/src/pages/list/widgets/opacity_widget.dart';
-import 'package:example/src/pages/list/widgets/scale_widget.dart';
 import 'package:flutter/material.dart';
 
 import 'items.dart';
+import 'list.dart';
 
 class ListPage extends StatefulWidget {
   ListPage({Key? key}) : super(key: key);
@@ -19,7 +16,6 @@ class _ListPageState extends State<ListPage> {
   void initState() {
     super.initState();
     list.addAll(generate());
-    list.forEach(print);
     setState(() {});
   }
 
