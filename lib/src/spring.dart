@@ -40,7 +40,7 @@ abstract class SpringBase<T> extends MotionValue<T> with CommonBaseMotion {
   @override
   T to(
     T target, {
-    double? delay,
+    Duration? delay,
     double? minDistance,
     double? spring,
     double? friction,
