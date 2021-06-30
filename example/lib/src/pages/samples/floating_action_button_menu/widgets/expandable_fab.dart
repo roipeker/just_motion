@@ -1,7 +1,7 @@
 import 'dart:math' as math;
-import 'package:just_motion/just_motion.dart';
 
 import 'package:flutter/material.dart';
+import 'package:just_motion/just_motion.dart';
 
 class ExpandableFab extends StatefulWidget {
   const ExpandableFab({
@@ -19,10 +19,22 @@ class ExpandableFab extends StatefulWidget {
   _ExpandableFabState createState() => _ExpandableFabState();
 }
 
-class _ExpandableFabState extends State<ExpandableFab>
-    with SingleTickerProviderStateMixin {
-  final _expandAnimation = 0.ease();
+class _ExpandableFabState extends State<ExpandableFab> {
+  /// as we work with 0-1 values, we need a small `minDistance` to prevent abrupt
+  /// jumps.
+  final _expandAnimation = 0.ease(minDistance: .01);
+  final _opacity = 1.0.ease(minDistance: .01, ease: 1 / 12);
+  final _scale = 1.0.ease(minDistance: .01, ease: 1 / 4);
+
   bool _open = false;
+
+  @override
+  void dispose() {
+    _expandAnimation.dispose();
+    _opacity.dispose();
+    _opacity.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -32,11 +44,9 @@ class _ExpandableFabState extends State<ExpandableFab>
 
   void _toggle() {
     setState(() => _open = !_open);
-    if (_open) {
-      _expandAnimation(1);
-    } else {
-      _expandAnimation(0);
-    }
+    _expandAnimation(_open ? 1 : 0);
+    _scale(_open ? 0.7 : 1);
+    _opacity(_open ? 0 : 1);
   }
 
   @override
@@ -100,25 +110,18 @@ class _ExpandableFabState extends State<ExpandableFab>
   Widget _buildTapToOpenFab() {
     return IgnorePointer(
       ignoring: _open,
-      child: AnimatedContainer(
-        transformAlignment: Alignment.center,
-        transform: Matrix4.diagonal3Values(
-          _open ? 0.7 : 1.0,
-          _open ? 0.7 : 1.0,
-          1.0,
-        ),
-        duration: const Duration(milliseconds: 250),
-        curve: const Interval(0.0, 0.5, curve: Curves.easeOut),
-        child: AnimatedOpacity(
-          opacity: _open ? 0.0 : 1.0,
-          curve: const Interval(0.25, 1.0, curve: Curves.easeInOut),
-          duration: const Duration(milliseconds: 250),
-          child: FloatingActionButton(
-            onPressed: _toggle,
-            child: const Icon(Icons.create),
+      child: Motion(() {
+        return Transform.scale(
+          scale: _scale(),
+          child: Opacity(
+            opacity: _opacity(),
+            child: FloatingActionButton(
+              onPressed: _toggle,
+              child: const Icon(Icons.create),
+            ),
           ),
-        ),
-      ),
+        );
+      }),
     );
   }
 }
