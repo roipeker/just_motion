@@ -1,6 +1,7 @@
-# example
+# just motion
 
-A new Flutter project.
+Shows a bunch of random samples to use just.motion
+
 
 ## Getting Started
 

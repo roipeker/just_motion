@@ -144,13 +144,15 @@ class _MotionNotifier {
   /// (usually useful for hot-reload).
   void dispose([bool reassembling = false]) {
     /// stop motions from running.
-    _motions.forEach((motion) {
+    final _buffer = List.of(_motions);
+    _buffer.forEach((motion) {
       if (motion is MotionValue) {
         motion._widgetDeactivate(reassembling);
       }
     });
     animations = emptyListener;
     _motions.clear();
+    _buffer.clear();
     _cachedMotions?.clear();
     _cachedMotions = null;
   }

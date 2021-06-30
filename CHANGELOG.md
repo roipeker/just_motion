@@ -1,3 +1,7 @@
+## 0.0.8+31
+- include examples/
+- fix motion list clearance on dispose.
+
 ## 0.0.7+28
 - added `MotionValue.stateless` to tell just_motion when the variable only exists inside the `build(BuildContext)` function scope, in a StatelessWidget.
   Set `motion.stateless = true`, in that situation to support auto-disposal on hot-reload.
