@@ -25,7 +25,7 @@ doc/api/
 
 # Files and directories created when test or run example
 example/android/local.properties
-example/ios/
+# example/ios/
 example/.dart_tool/
 example/.packages
 
