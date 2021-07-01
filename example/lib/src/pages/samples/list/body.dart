@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'items.dart';
 import 'list.dart';
 
 class ListPage extends StatefulWidget {
@@ -12,11 +11,15 @@ class ListPage extends StatefulWidget {
 
 class _ListPageState extends State<ListPage> {
   final list = <String>[];
+  bool _delayed = true;
   @override
   void initState() {
     super.initState();
-    list.addAll(generate());
-    setState(() {});
+    Future.delayed(Duration(milliseconds: 800), () {
+      setState(() {
+        _delayed = false;
+      });
+    });
   }
 
   @override
@@ -27,22 +30,21 @@ class _ListPageState extends State<ListPage> {
         title: const Text('List view'),
       ),
       body: Container(
-        child: ListView(
-          padding: const EdgeInsets.all(16.0),
-          // separatorBuilder: (ctx, idx) => const SizedBox(
-          //   height: 8.0,
-          // ),
-          children: [
-            ScaleWidget(),
-            gap18,
-            OpacityWidget(),
-            gap18,
-            HeightWidget(),
-            gap18,
-            ColorWidget(),
-            gap18,
-          ],
-        ),
+        child: _delayed
+            ? Center(child: CircularProgressIndicator())
+            : ListView(
+                padding: const EdgeInsets.all(16.0),
+                children: [
+                  ScaleWidget(),
+                  gap18,
+                  OpacityWidget(),
+                  gap18,
+                  HeightWidget(),
+                  gap18,
+                  ColorWidget(),
+                  gap18,
+                ],
+              ),
       ),
     );
   }

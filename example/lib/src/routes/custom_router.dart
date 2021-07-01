@@ -17,6 +17,8 @@ abstract class CustomRouter {
         return (_) => ListPage();
       case RouteName.floatingActionButtonMenu:
         return (_) => ExampleExpandableFab();
+      case RouteName.simple_button:
+        return (_) => SimpleButtonPage();
     }
     return (_) => const SizedBox.shrink();
   }

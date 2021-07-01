@@ -8,8 +8,15 @@ class ColorWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final height = 24.0.ease(target: 120, ease: .23);
-    final bgColor = Colors.green.ease(ease: .05);
+    final height = 24.0.ease(
+      target: 120,
+      ease: .23,
+      stateless: true,
+    );
+    final bgColor = Colors.green.ease(
+      ease: .05,
+      stateless: true,
+    );
     bgColor.to(Colors.red);
     // height.delay(Duration(seconds: 1));
     return AnimatedBuilder(

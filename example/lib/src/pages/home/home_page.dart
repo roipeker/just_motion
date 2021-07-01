@@ -23,6 +23,10 @@ class HomePage extends StatelessWidget {
               title: 'Floating Action Button Menu',
               route: RouteName.floatingActionButtonMenu,
             ),
+            HomePageListItem(
+              title: 'Simple Button',
+              route: RouteName.simple_button,
+            ),
           ],
         ),
       ),

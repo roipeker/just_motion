@@ -10,8 +10,11 @@ class OpacityWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final opacity = .01.ease(
       target: 1,
-      ease: .05
+      ease: .05,
+      minDistance: .01,
+      stateless: true,
     );
+    opacity.delay(Duration(milliseconds: 200));
     return MotionBuilder(
       builder: (context, child) => Opacity(
         child: child,

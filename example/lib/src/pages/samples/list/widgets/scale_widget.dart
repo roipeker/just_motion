@@ -10,6 +10,8 @@ class ScaleWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final scale = .1.ease(
       target: 1,
+      minDistance: .001,
+      stateless: true,
     );
     return MotionBuilder(
       builder: (context, child) => Transform.scale(

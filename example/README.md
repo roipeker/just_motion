@@ -1,7 +1,11 @@
 # just motion
 
-Shows a bunch of random samples to use just.motion
+Shows a bunch of random samples to use just.motion.
 
+current examples:
+- Basic List transitions.
+- Expandable Fab
+- Simple button animation
 
 ## Getting Started
 

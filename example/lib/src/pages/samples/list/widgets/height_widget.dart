@@ -8,7 +8,10 @@ class HeightWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final height = 1.ease(target: 88);
+    final height = 1.ease(
+      target: 88,
+      stateless: true,
+    );
 
     return MotionBuilder(
       builder: (context, child) => Container(
